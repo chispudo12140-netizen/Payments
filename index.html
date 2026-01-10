@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pago de Pedido</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      width: 350px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+    h2 {
+      text-align: center;
+    }
+    .warning {
+      color: red;
+      font-size: 12px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    button {
+      background: #0070f3;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005ad1;
+    }
+    .success {
+      color: green;
+      text-align: center;
+      display: none;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Pago de Pedido</h2>
+
+    <form id="paymentForm">
+      <input type="text" placeholder="Nombre del cliente" required>
+      <input type="email" placeholder="Correo electrónico" required>
+      <input type="text" placeholder="Número de pedido (ej. PED-12345)" required>
+      <input type="text" placeholder="Número de tarjeta (ej. 1111 2222 3333 4444)" required>
+      <input type="text" placeholder="Fecha vencimiento (MM/AA)" required>
+      <input type="text" placeholder="CVV (ej. 123)" required>
+
+      <button type="submit">Pagar Q 0.99</button>
+    </form>
+
+    <div class="success" id="successMsg">
+      ✅ Pago procesado exitosamente
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("paymentForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      document.getElementById("successMsg").style.display = "block";
+
+      // Envío por correo (abre el cliente de correo)
+      window.location.href =
+        "mailto:tucorreo@gmail.com" +
+        "?subject=Pago" +
+        "&body=Se realizó un pago para el proyecto escolar.";
+    });
+  </script>
+
+</body>
+</html
